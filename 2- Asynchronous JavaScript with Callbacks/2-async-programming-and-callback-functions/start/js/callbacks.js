@@ -4,13 +4,13 @@ const peopleList = document.getElementById('people');
 const btn = document.querySelector('button');
 
 // Make an AJAX request
-function getJSON(url) {
+function getJSON(url, callback) {
   const xhr = new XMLHttpRequest();
   xhr.open('GET', url);
   xhr.onload = () => {
     if(xhr.status === 200) {
       let data = JSON.parse(xhr.responseText);
-      console.log(data);
+      return callback(data);
     }
   };
   xhr.send();
@@ -27,3 +27,14 @@ function generateHTML(data) {
     <p>${data.extract}</p>
   `;
 }
+
+function getProfiles (json) {
+  json.people.map( person => {
+    getJSON(wikiUrl + person.name, generateHTML)
+  })
+}
+
+btn.addEventListener('click', (event) => {
+  getJSON(astrosUrl, getProfiles)
+  event.target.remove();
+});
